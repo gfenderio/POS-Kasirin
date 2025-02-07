@@ -1,7 +1,6 @@
 <?php  
-  
   require "config/config.php";
-
+  
   $title  = "Dashboard - DikasirIn POS";
   require "template/header.php";
   require "template/navbar.php";
