@@ -1,3 +1,13 @@
+<?php  
+  
+  require "config/config.php";
+
+  $title  = "Dashboard - DikasirIn POS";
+  require "template/header.php";
+  require "template/navbar.php";
+  require "template/sidebar.php";
+
+?>  
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -268,3 +278,5 @@
       <!-- /.container-fluid -->
     </div>
     <!-- /.content -->
+
+    <?php require "template/footer.php"; ?>
