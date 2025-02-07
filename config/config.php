@@ -2,9 +2,9 @@
 
 date_default_timezone_set('Asia/Jakarta');
 
-$host  = 'localhost';
-$user  = 'root';
-$pass = '';
+$host   = 'localhost';
+$user   = 'root';
+$pass   = '';
 $dbname = 'db_dikasirinpos';
 
 $koneksi = mysqli_connect($host, $user, $pass, $dbname);
@@ -17,5 +17,4 @@ $koneksi = mysqli_connect($host, $user, $pass, $dbname);
 //}
 
 $main_url = 'http://localhost/POS-Kasirin/';
-
 ?>
