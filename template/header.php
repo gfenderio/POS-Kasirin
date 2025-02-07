@@ -12,7 +12,8 @@
   <!-- IonIcons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="<?= $main_url ?>asset/AdminLTE-3.2.0/dist/css/adminlte.min.css">
+  <link rel="shortcut icon" href="<?= $main_url ?>asset/images/cart.png" type="image/x-icon">
 </head>
 <!--
 `body` tag options:
