@@ -7,7 +7,7 @@
   require "template/navbar.php";
   require "template/sidebar.php";
 
-?>  
+?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -279,4 +279,4 @@
     </div>
     <!-- /.content -->
 
-    <?php require "template/footer.php"; ?>
+<?php require "template/footer.php"; ?>
