@@ -14,15 +14,15 @@
           <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
             <?= 'Admin' ?><i class="fas fa-user-cog ml-2"></i>
             </a>
-          <div class="dropdown-menu dropdown-menu dropdown-menu-right">
-            <a href="#" class="dropdown-item-text-right">
-            Change Password <i class="fas fa-key" style="color: #2f2d2d;"></i>
+            <div class="dropdown-menu dropdown-menu-right text-center">
+            <a href="#" class="dropdown-item">
+              Change Password <i class="fas fa-key"></i>
             </a>
             <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item-text-right">
-            Log Out <i class="fas fa-sign-out-alt" style="color: #2f2d2d;"></i>
+            <a href="#" class="dropdown-item">
+              Log Out <i class="fas fa-sign-out-alt"></i>
             </a>
-          </div>
+            </div>
       </li>
     </ul>
   </nav>

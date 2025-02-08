@@ -16,12 +16,12 @@ require "../template/sidebar.php";
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Users</h1>
+            <h1 class="m-0">Pengguna</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="<?=$main_url?>dashboard.php">Home</a></li>
-              <li class="breadcrumb-item"><a href="<?=$main_url?>user/data-user.php">Users</a></li>
+              <li class="breadcrumb-item"><a href="<?=$main_url?>dashboard.php">Halaman Utama</a></li>
+              <li class="breadcrumb-item"><a href="<?=$main_url?>user/data-user.php">Pengguna</a></li>
               <li class="breadcrumb-item active">Dashboard</li>
             </ol>
           </div><!-- /.col -->
@@ -33,7 +33,7 @@ require "../template/sidebar.php";
       <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-user-plus fa-sm" style="margin-right: 8px;"></i> Add User</h3>
+                <h3 class="card-title"><i class="fas fa-user-plus fa-sm" style="margin-right: 8px;"></i> Tambah Pengguna</h3>
             </div>
             <div class="card-body">
                 <form action="your_form_action.php" method="post" enctype="multipart/form-data">
@@ -45,7 +45,7 @@ require "../template/sidebar.php";
                                 placeholder="Masukan Username" autofocus autocomplete="off" required>
                             </div>
                             <div class="form-group">
-                                <label for="fullname">Fullname</label>
+                                <label for="fullname">Nama Lengkap</label>
                                 <input type="text" name="fullname" class="form-control" id="fullname" 
                                 placeholder="Masukan Nama Lengkap" required>
                             </div>
