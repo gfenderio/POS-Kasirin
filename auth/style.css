@@ -1,0 +1,21 @@
+#bg-login{
+    background-image: url('../asset/image/supermarket.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.slide-down {
+    animation: slide-down 1.5s;
+}
+
+@keyframes slide-down {
+    from {
+        transform: translateY(-40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
