@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../../../Template"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "POS-Kasirin"
+	}
+}
