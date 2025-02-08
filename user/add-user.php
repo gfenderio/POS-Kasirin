@@ -1,6 +1,8 @@
 <?php
 
 require "../config/config.php";
+require "../config/function.php";
+require "../module/mode-user.php";
 
 $title = "Tambah User - Dikasirin POS";
 require "../template/header.php";
@@ -9,6 +11,15 @@ require "../template/sidebar.php";
 
 ?>
 
+if (isset($_POST["simpan"])) {
+    if (insert($_POST) > 0) {
+        echo "<script>
+                alert('Data berhasil ditambahkan');
+              </script>";
+    }
+}
+
+?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -32,6 +43,7 @@ require "../template/sidebar.php";
     <section class="content">
       <div class="container-fluid">
         <div class="card">
+          <form action="" method="post" enctype="multipart/form-data">
             <div class="card-header">
                 <h3 class="card-title"><i class="fas fa-user-plus fa-sm" style="margin-right: 8px;"></i> Tambah Pengguna</h3>
             </div>
@@ -76,20 +88,19 @@ require "../template/sidebar.php";
                         </div>
                         <div class="col-lg-4 text-center">
                             <img src="<?= $main_url ?>asset/image/default.png" class="profile-user-img img-circle mb-3" alt="">
-                            <input type="file" class="form-control" name="image">
-                            <span class="text-sm">Type file gambar JPG | PNG | GIF</span>
-                            <span class="text-sm">Width = Height</span>
+                            <input type="file" class="form-control" name="foto">
+                            <span class="text-sm">Tipe file gambar JPG | PNG | GIF</span>
+                            <span class="text-sm"> Lebar = Tinggi</span>
                         </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" name="simpan" class="btn btn-primary btn-sm float-right"><i class="fas fa-save"></i> Simpan</button>
                         <button type="reset" class="btn btn-danger btn-sm float-right mr-1"><i class="fas fa-times"></i> Reset</button>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
+                  </div>
+              </div>
+          </form>
+          </div>
     </section>
 
 <?php

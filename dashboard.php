@@ -38,7 +38,7 @@
               <div class="inner">
                 <h3>0</h3>
 
-                <p>Users</p>
+                <p>Pengguna</p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-add"></i>
@@ -68,7 +68,7 @@
               <div class="inner">
                 <h3>0</h3>
 
-                <p>Customer</p>
+                <p>Pelanggan</p>
               </div>
               <div class="icon">
                 <i class="ion ion-person-stalker"></i>
