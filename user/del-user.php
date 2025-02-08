@@ -1,7 +1,7 @@
 <?php
 
 require "../config/config.php";
-require "../config/functions.php";
+require "../config/function.php";
 require "../module/mode-user.php";
 
 $id    =$_GET["id"];

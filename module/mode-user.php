@@ -43,4 +43,20 @@ function insert($data) {
 
     return mysqli_affected_rows($koneksi);
     }
+
+
+function delete($id, $foto) {
+    global $koneksi;
+
+    $sqlDel = "DELETE FROM tbl_user WHERE userid = $id";
+    mysqli_query($koneksi, $sqlDel);
+
+    if ($foto != 'default.png') {
+        unlink('../asset/image/' . $foto);
+    }
+
+    return mysqli_affected_rows($koneksi);
+}
+
+
 ?>

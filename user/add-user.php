@@ -11,6 +11,7 @@ require "../template/sidebar.php";
 
 ?>
 
+<?php
 if (isset($_POST["simpan"])) {
     if (insert($_POST) > 0) {
         echo "<script>
@@ -20,6 +21,7 @@ if (isset($_POST["simpan"])) {
 }
 
 ?>
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
