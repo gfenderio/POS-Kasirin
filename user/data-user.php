@@ -1,6 +1,13 @@
 <?php
 
 require "../config/config.php";
+
+session_start();
+if (!isset($_SESSION["ssLogin"])) {
+  header("Location: {$main_url}auth/login.php");
+  exit();
+}
+
 require "../config/function.php";
 require "../module/mode-user.php";
 
@@ -90,12 +97,8 @@ require "../template/sidebar.php";
             </div>
         </div>
     </div>
-
 </section>
 
-
 <?php
-
 require "../template/footer.php";
-
 ?>

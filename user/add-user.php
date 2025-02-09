@@ -1,6 +1,13 @@
 <?php
 
 require "../config/config.php";
+
+session_start();
+if (!isset($_SESSION["ssLogin"])) {
+  header("Location: {$main_url}auth/login.php");
+  exit();
+}
+
 require "../config/function.php";
 require "../module/mode-user.php";
 
@@ -9,9 +16,6 @@ require "../template/header.php";
 require "../template/navbar.php";
 require "../template/sidebar.php";
 
-?>
-
-<?php
 if (isset($_POST["simpan"])) {
     if (insert($_POST) > 0) {
         echo "<script>
@@ -19,7 +23,6 @@ if (isset($_POST["simpan"])) {
               </script>";
     }
 }
-
 ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -106,7 +109,5 @@ if (isset($_POST["simpan"])) {
     </section>
 
 <?php
-
 require "../template/footer.php";
-
 ?>

@@ -12,7 +12,7 @@
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-            <?= 'Admin' ?><i class="fas fa-user-cog ml-2"></i>
+            <?= userLogin()['username'] ?><i class="fas fa-user-cog ml-2"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right text-center">
             <a href="#" class="dropdown-item">

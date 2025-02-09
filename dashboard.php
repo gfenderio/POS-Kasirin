@@ -1,5 +1,12 @@
-<?php  
+<?php
   require "config/config.php";
+  require "config/function.php";
+  
+  session_start();
+  if (!isset($_SESSION["ssLogin"])) {
+    header("Location: {$main_url}auth/login.php");
+    exit();
+  }
   
   $title = "Dashboard - DikasirIn POS";
   require "template/header.php";

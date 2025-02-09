@@ -1,6 +1,13 @@
 <?php
 
 require "../config/config.php";
+
+session_start();
+if (!isset($_SESSION["ssLogin"])) {
+  header("Location: {$main_url}auth/login.php");
+  exit();
+}
+
 require "../config/function.php"; // Include the function.php file
 require "../module/mode-user.php"; // Include the mode-user.php file
 

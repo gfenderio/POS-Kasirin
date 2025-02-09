@@ -11,10 +11,10 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <img src="<?= $main_url ?>asset/image/<?= userLogin()['foto'] ?>" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block"><?= 'gilgal' ?></a>
+          <a href="#" class="d-block"><?= userLogin()['fullname'] ?></a>
         </div>
       </div>
 
@@ -22,16 +22,17 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item">
-            <a href="<?= $main_url ?>dashboard.php" class="nav-link">
+            <a href="<?= $main_url ?>dashboard.php" class="nav-link <?= menuHome() ?>">
               <i class="nav-icon fas fa-tachometer-alt text-sm"></i>
               <p>
                 Dashboard
               </p>
-              </a>
+            </a>
           </li>
+          <?php if (userLogin()['level'] != 3) { ?>
           <li class="nav-item">
             <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-folder text-sm"></i>
+              <i class="nav-icon fas fa-folder text-sm"></i>
               <p>
                 Master
                 <i class="fas fa-angle-left right"></i>
@@ -57,68 +58,73 @@
                 </a>
               </li>
             </ul>
-            </li>
-            <li class="nav-header">TRANSAKSI</li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-shopping-cart text-sm"></i>
-                <p>
-                  Penjualan
-                </p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-file-invoice-dollar text-sm"></i>
-                <p>
-                  Pembelian
-                </p>
-              </a>
-              </li>
-              <li class="nav-header">LAPORAN</li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-chart-line text-sm"></i>
-                  <p>
-                    Laporan Penjualan
-                  </p>
+          </li>
+          <?php } ?>
+          <li class="nav-header">TRANSAKSI</li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-shopping-cart text-sm"></i>
+              <p>
+                Penjualan
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-file-invoice-dollar text-sm"></i>
+              <p>
+                Pembelian
+              </p>
+            </a>
+          </li>
+          <li class="nav-header">LAPORAN</li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-line text-sm"></i>
+              <p>
+                Laporan Penjualan
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-chart-pie text-sm"></i>
+              <p>
+                Laporan Pembelian
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-warehouse text-sm"></i>
+              <p>
+                Laporan Stok
+              </p>
+            </a>
+          </li>
+          <?php if (userLogin()['level'] == 1) { ?>
+          <li class="nav-header">PENGATURAN</li>
+          <li class="nav-item <?= menuSetting() ?>">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-cog text-sm"></i>
+              <p>
+                Pengaturan
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item ">
+                <a href="<?=$main_url ?>user/data-user.php" class="nav-link <?= menuUser() ?>">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Pengguna</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-chart-pie text-sm"></i>
-                  <p>
-                    Laporan Pembelian
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-warehouse text-sm"></i>
-                  <p>
-                    Laporan Stok
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon fas fa-cog text-sm"></i>
-                  <p>
-                    Pengaturan
-                    <i class="fas fa-angle-left right"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="<?=$main_url ?>user/data-user.php" class="nav-link">
-                      <i class="far fa-circle nav-icon"></i>
-                      <p>Pengguna</p>
-                    </a>
-                  </li>
-              </li>
+            </ul>
+          </li>
+          <?php } ?>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
     </div>
     <!-- /.sidebar -->
-  </aside>
+</aside>

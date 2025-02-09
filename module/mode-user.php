@@ -1,4 +1,21 @@
 <?php
+
+if (userLogin()['level'] != '1') {
+    header("Location: {$main_url}error-page.php");
+    exit();
+}
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION["ssLogin"])) {
+    header("Location: {$main_url}auth/login.php");
+    exit();
+}
+
+require_once "../config/config.php";
+
 function insert($data) {
     global $koneksi;
     
@@ -73,7 +90,7 @@ function selectUser3($level){
 function update($data) {
     global $koneksi;
 
-    $iduser = mysqli_real_escape_string($koneksi, $data["id"]);
+    $iduser     = mysqli_real_escape_string($koneksi, $data["id"]);
     $username   = strtolower(mysqli_real_escape_string($koneksi, $data["username"]));
     $fullname   = mysqli_real_escape_string($koneksi, $data["fullname"]);
     $address    = mysqli_real_escape_string($koneksi, $data["address"]);
@@ -82,13 +99,13 @@ function update($data) {
     $fotolama   = mysqli_real_escape_string($koneksi, $data['oldimg']);
 
     // cek username sekarang
-    $queryUsername = mysqli_query($koneksi, "SELECT username FROM tbl_user WHERE userid != $iduser");
+    $queryUsername = mysqli_query($koneksi, "SELECT username FROM tbl_user WHERE userid = $iduser");
     $dataUsername = mysqli_fetch_assoc($queryUsername);
     $curUsername = $dataUsername['username'];
 
     // cek username baru
-    $newUsername = mysqli_query($koneksi, "SELECT username FROM tbl_user WHERE username = '$username'");
     if ($username != $curUsername) {
+        $newUsername = mysqli_query($koneksi, "SELECT username FROM tbl_user WHERE username = '$username'");
         if (mysqli_num_rows($newUsername) > 0) {
             echo "<script>
                 alert('Username sudah terdaftar, update data user gagal');

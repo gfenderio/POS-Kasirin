@@ -1,4 +1,12 @@
 <?php
+
+session_start();
+
+if (isset($_SESSION["ssLogin"])) {
+    header("Location: ../dashboard.php");
+    exit();
+}
+
 require '../config/config.php';
 
 if (isset($_POST['login'])) {
@@ -10,6 +18,10 @@ if (isset($_POST['login'])) {
     if (mysqli_num_rows($queryLogin) > 0) {
         $row = mysqli_fetch_assoc($queryLogin);
         if (password_verify($password, $row['password'])) {
+            // set session
+            $_SESSION["ssLogin"] = true;
+            $_SESSION["ssUser"] = $username;
+
             echo "<script>alert('Selamat datang $row[fullname]');window.location='{$main_url}dashboard.php';</script>";
         } else {
             echo "<script>alert('Password salah!');</script>";
