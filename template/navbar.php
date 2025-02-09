@@ -15,8 +15,8 @@
             <?= userLogin()['username'] ?><i class="fas fa-user-cog ml-2"></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right text-center">
-            <a href="#" class="dropdown-item">
-              Change Password <i class="fas fa-key"></i>
+            <a href="<?= $main_url ?>auth/change-password.php" class="dropdown-item">
+              Ganti Password <i class="fas fa-key"></i>
             </a>
             <div class="dropdown-divider"></div>
             <a href="<?= $main_url ?>auth/logout.php" class="dropdown-item">

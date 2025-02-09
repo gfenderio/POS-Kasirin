@@ -8,6 +8,7 @@ if (!isset($_SESSION["ssLogin"])) {
   exit();
 }
 
+require "../config/config.php";
 require "../config/function.php";
 require "../module/mode-user.php";
 
