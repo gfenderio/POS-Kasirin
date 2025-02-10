@@ -46,10 +46,14 @@ if (!function_exists('uploadimg')) {
     }
 }
 
-function getData($sql){
+function getData($query) {
     global $koneksi;
-
-    $result = mysqli_query($koneksi, $sql);
+    $result = mysqli_query($koneksi, $query);
+    if (!$result) {
+        // Log the error message
+        error_log("Error: " . mysqli_error($koneksi));
+        return false;
+    }
     $rows = [];
     while ($row = mysqli_fetch_assoc($result)) {
         $rows[] = $row;

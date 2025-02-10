@@ -91,8 +91,10 @@ if ($msg == 'terhapus') {
                             <td><?=$supplier["alamat"]?></td>
                             <td><?=$supplier["deskripsi"]?></td>
                             <td>
-                                <a href="" class="btn btn-sm btn-warning" title="edit supplier"><i class="fas fa-pen"></i></a>
-                                <a href="del-supplier.php?id=<?= $supplier ['idsup'] ?>" class="btn btn-sm btn-danger" title="hapus supplier" onclick="return confirm('Anda yakin akan menghapus data supplier ini?')"><i class="fas fa-trash"></i></a>
+                                <a href="edit-supplier.php?id=<?= $supplier ['idsup'] ?>" class="btn btn-sm btn-warning" 
+                                title="edit supplier"><i class="fas fa-pen"></i></a>
+                                <a href="del-supplier.php?id=<?= $supplier ['idsup'] ?>" class="btn btn-sm btn-danger" 
+                                title="hapus supplier" onclick="return confirm('Anda yakin akan menghapus data supplier ini?')"><i class="fas fa-trash"></i></a>
                             </td>
                             </tr>
                         <?php endforeach; ?>
