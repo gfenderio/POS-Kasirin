@@ -1,18 +1,23 @@
 <?php
-  require "config/config.php";
-  require "config/function.php";
-  
-  session_start();
-  if (!isset($_SESSION["ssLogin"])) {
-    header("Location: {$main_url}auth/login.php");
-    exit();
-  }
-  
-  $title = "Dashboard - DikasirIn POS";
-  require "template/header.php";
-  require "template/navbar.php";
-  require "template/sidebar.php";
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+require "./config/config.php";
+
+session_start();
+if (!isset($_SESSION["ssLogin"])) {
+  header("Location: {$main_url}auth/login.php");
+  exit();
+}
+
+require "./config/function.php";
+require "./module/mode-supplier.php";
+require "./module/mode-customer.php";
+
+$title = "Dashboard - Dikasirin POS";
+require "./template/header.php";
+require "./template/navbar.php";
+require "./template/sidebar.php";
 ?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -103,4 +108,4 @@
     </div>
     <!-- /.content -->
   </div>
-<?php require "template/footer.php"; ?>
+<?php require "./template/footer.php"; ?>

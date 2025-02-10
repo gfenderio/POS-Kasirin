@@ -5,16 +5,16 @@ if (userLogin()['level'] == 3) {
     exit();
 }
 
-function insert($data){
+function insertCustomer($data){
     global $koneksi;
 
     $nama       = mysqli_real_escape_string($koneksi, $data["nama"]);
-    $telp       = mysqli_real_escape_string($koneksi, $data["telp"]); // Corrected key
+    $telpon     = mysqli_real_escape_string($koneksi, $data["telpon"]); // Corrected key
     $deskripsi  = mysqli_real_escape_string($koneksi, $data["deskripsi"]);
     $alamat     = mysqli_real_escape_string($koneksi, $data["alamat"]);
 
-    $sqlSupplier = "INSERT INTO tbl_supplier (nama, telp, deskripsi, alamat) VALUES ('$nama', '$telp', '$deskripsi', '$alamat')";
-    if (mysqli_query($koneksi, $sqlSupplier)) {
+    $sqlCustomer = "INSERT INTO tbl_customer (nama, telpon, deskripsi, alamat) VALUES ('$nama', '$telpon', '$deskripsi', '$alamat')";
+    if (mysqli_query($koneksi, $sqlCustomer)) {
         return true;
     } else {
         // Log the error message
@@ -23,16 +23,16 @@ function insert($data){
     }
 }
 
-function update($data) {
+function updateCustomer($data) {
     global $koneksi;
 
-    $id_supplier = mysqli_real_escape_string($koneksi, $data["id_supplier"]);
+    $id_customer = mysqli_real_escape_string($koneksi, $data["id_customer"]);
     $nama        = mysqli_real_escape_string($koneksi, $data["nama"]);
-    $telp        = mysqli_real_escape_string($koneksi, $data["telp"]); // Corrected key
+    $telpon      = mysqli_real_escape_string($koneksi, $data["telpon"]); // Corrected key
     $deskripsi   = mysqli_real_escape_string($koneksi, $data["deskripsi"]);
     $alamat      = mysqli_real_escape_string($koneksi, $data["alamat"]);
 
-    $sqlUpdate = "UPDATE tbl_supplier SET nama = '$nama', telp = '$telp', deskripsi = '$deskripsi', alamat = '$alamat' WHERE idsup = $id_supplier";
+    $sqlUpdate = "UPDATE tbl_customer SET nama = '$nama', telpon = '$telpon', deskripsi = '$deskripsi', alamat = '$alamat' WHERE id_customer = $id_customer";
     if (mysqli_query($koneksi, $sqlUpdate)) {
         return true;
     } else {
@@ -42,10 +42,10 @@ function update($data) {
     }
 }
 
-function delete($id){
+function deleteCustomer($id){
     global $koneksi;
 
-    $sqlDelete = "DELETE FROM tbl_supplier WHERE idsup = $id";
+    $sqlDelete = "DELETE FROM tbl_customer WHERE id_customer = $id";
     mysqli_query($koneksi, $sqlDelete);
 
     return mysqli_affected_rows($koneksi);

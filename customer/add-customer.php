@@ -9,9 +9,9 @@ if (!isset($_SESSION["ssLogin"])) {
 }
 
 require "../config/function.php";
-require "../module/mode-supplier.php";
+require "../module/mode-customer.php";
 
-$title = "Tambah Supplier - Dikasirin POS";
+$title = "Tambah Customer - Dikasirin POS";
 require "../template/header.php";
 require "../template/navbar.php";
 require "../template/sidebar.php";
@@ -19,16 +19,16 @@ require "../template/sidebar.php";
 $alert = '';
 
 if (isset($_POST["simpan"])) {
-    if (insert($_POST)){
+    if (insertCustomer($_POST)){
         $alert = "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-                    <i class='icon fas fa-check'></i> Supplier berhasil ditambahkan
+                    <i class='icon fas fa-check'></i> Customer berhasil ditambahkan
                     <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
                         <span aria-hidden='true'>&times;</span>
                     </button>
                   </div>";
     } else {
         $alert = "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-                    <i class='icon fas fa-times'></i> Supplier gagal ditambahkan
+                    <i class='icon fas fa-times'></i> Customer gagal ditambahkan
                     <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
                         <span aria-hidden='true'>&times;</span>
                     </button>
@@ -48,13 +48,13 @@ if (isset($_POST["simpan"])) {
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Supplier</h1>
+            <h1 class="m-0">Customer</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="<?=$main_url?>dashboard.php">Halaman Utama</a></li>
-              <li class="breadcrumb-item"><a href="<?=$main_url?>user/data-supplier.php">Supplier</a></li>
-              <li class="breadcrumb-item active">Tambah Supplier</li>
+              <li class="breadcrumb-item"><a href="<?=$main_url?>customer/data-customer.php">Customer</a></li>
+              <li class="breadcrumb-item active">Tambah Customer</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -66,7 +66,7 @@ if (isset($_POST["simpan"])) {
         <div class="card">
           <form action="" method="post">
             <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-user-plus fa-sm" style="margin-right: 8px;"></i> Tambah Supplier</h3>
+                <h3 class="card-title"><i class="fas fa-user-plus fa-sm" style="margin-right: 8px;"></i> Tambah Customer</h3>
                 <button type="submit" name="simpan" class="btn btn-primary btn-sm float-right"><i class="fas fa-save"></i> Simpan</button>
                 <button type="reset" class="btn btn-danger btn-sm float-right mr-1"><i class="fas fa-times"></i> Reset</button>
             </div>
@@ -79,21 +79,21 @@ if (isset($_POST["simpan"])) {
                         <div class="form-group">
                             <label for="nama">Nama</label>
                             <input type="text" name="nama" class="form-control" id="nama" 
-                            placeholder="Nama Supplier" autofocus autocomplete="off" required>
+                            placeholder="Nama Customer" autofocus autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="telp">Telpon</label>
-                            <input type="text" name="telp" class="form-control" id="telpon" placeholder="No. Telpon supplier" pattern="[0-9]{5,}" required>
+                            <label for="telpon">Telpon</label>
+                            <input type="text" name="telpon" class="form-control" id="telpon" placeholder="No. Telpon customer" pattern="[0-9]{5,}" required>
                         </div>    
                         <div class="form-group">
                             <label for="deskripsi">Deskripsi</label>
                             <input type="text" name="deskripsi" class="form-control" 
-                            placeholder="Keterangan Supplier" required>
+                            placeholder="Keterangan Customer" required>
                         </div>                    
                         <div class="form-group">
                             <label for="alamat">Alamat</label>
                             <textarea name="alamat" id="alamat" rows="3" class="form-control" 
-                            placeholder="Masukan Alamat Supplier" required></textarea>
+                            placeholder="Masukan Alamat Customer" required></textarea>
                         </div>
                     </div>
                 </div>

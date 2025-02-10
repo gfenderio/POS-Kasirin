@@ -95,8 +95,8 @@ $supplier = $supplier[0];
                             placeholder="Nama Supplier" autofocus value="<?=$supplier['nama']?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="telpon">Telpon</label>
-                            <input type="text" name="telpon" class="form-control" id="telpon" 
+                            <label for="telp">Telpon</label>
+                            <input type="text" name="telp" class="form-control" id="telp" 
                             placeholder="No. Telpon supplier" pattern="[0-9]{5,}" value="<?=$supplier['telp']?>" required> <!-- Corrected column name -->
                         </div>    
                         <div class="form-group">
