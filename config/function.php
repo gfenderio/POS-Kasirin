@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('uploadimg')) {
-    function uploadimg($url = null){
+    function uploadimg($url = null, $name = null){
         $namafile = $_FILES['foto']['name'];
         $ukuran   = $_FILES['foto']['size'];
         $tmpfile  = $_FILES['foto']['tmp_name'];
@@ -40,7 +40,8 @@ if (!function_exists('uploadimg')) {
             }
         }
 
-        $namafileBaru = rand(10, 1000) . '-' . $namafile;
+        $namafileBaru = $name ? "{$name}.{$ekstensigambar}" : rand(10, 1000) . "-{$namafile}";
+
         move_uploaded_file($tmpfile, '../asset/image/' . $namafileBaru);
         return $namafileBaru;
     }
