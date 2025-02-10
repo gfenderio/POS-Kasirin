@@ -53,7 +53,7 @@ if (isset($_POST["simpan"])) {
                 <h3 class="card-title"><i class="fas fa-user-plus fa-sm" style="margin-right: 8px;"></i> Tambah Pengguna</h3>
             </div>
             <div class="card-body">
-                <form action="your_form_action.php" method="post" enctype="multipart/form-data">
+                <form action="" method="post" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-lg-8 mb-3">
                             <div class="form-group">
