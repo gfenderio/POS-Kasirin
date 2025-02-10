@@ -81,9 +81,8 @@ if (isset($_POST["simpan"])) {
                             placeholder="Nama Supplier" autofocus autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label for="telpon">Telpon</label>
-                            <input type="text" name="telpon" class="form-control" id="telpon" 
-                            placeholder="No. Telpon supplier" pattern="[0-9]{5,}" required>
+                            <label for="telp">Telpon</label>
+                            <input type="text" name="telp" class="form-control" placeholder="No. Telpon supplier" pattern="[0-9]{5,}" required>
                         </div>    
                         <div class="form-group">
                             <label for="deskripsi">Deskripsi</label>
