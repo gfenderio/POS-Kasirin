@@ -38,7 +38,7 @@ if (isset($_POST["simpan"])) {
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="<?=$main_url?>dashboard.php">Halaman Utama</a></li>
               <li class="breadcrumb-item"><a href="<?=$main_url?>user/data-user.php">Pengguna</a></li>
-              <li class="breadcrumb-item active">Dashboard</li>
+              <li class="breadcrumb-item active">Tambah Pengguna</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
