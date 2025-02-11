@@ -138,7 +138,7 @@ if ($msg == 'updated') {
                                     <td class="text-center"><?= number_format($brg['harga_beli'],0,',','.') ?></td>
                                     <td class="text-center"><?= number_format($brg['harga_jual'],0,',','.') ?></td>
                                     <td class="text-center">
-                                        <button type="button" class="btn btn-sm btn-secondary" id="btnCetakBarcode" data-barcode="<?= htmlspecialchars($brg['barcode']) ?>" data-nama="<?= htmlspecialchars($brg['nama_barang']) ?>" title="cetak barcode">
+                                        <button type="button" class="btn btn-sm btn-secondary" id="btnCetakBarcode" data-barcode="<?= htmlspecialchars($brg['barcode']) ?>" data-nama="<?= htmlspecialchars($brg['nama_barang']) ?>" data-harga="<?= htmlspecialchars($brg['harga_jual']) ?>" title="cetak barcode">
                                             <i class="fas fa-barcode"></i>
                                         </button>
                                         <a href="form-barang.php?id=<?= htmlspecialchars($brg['idbar']) ?>&msg=editing" 
@@ -177,18 +177,19 @@ if ($msg == 'updated') {
                     <label for="barcode" class="col-sm-3 col-form-label">Barcode</label>
                     <div class="col-sm-9">
                       <input type="text" class="form-control" id="barcode" readonly>
+                      <input type="hidden" id="harga" value="">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label for="jmlCetak" class="col-sm-3 col-form-label">Jumlah Cetak</label>
                     <div class="col-sm-9">
-                      <input type="number" class="form-control" id="jmlCetak" value="1" min="1" max="10" 
-                      title="maksimal 10 barcode">
+                      <input type="number" class="form-control" id="jmlCetak" value="1" min="1" max="40" 
+                      title="maksimal 40 barcode">
                     </div>
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
               <button type="button" class="btn btn-primary" id="preview"><i class="fas fa-print"></i> Cetak</button>
             </div>
           </div>
@@ -204,17 +205,24 @@ if ($msg == 'updated') {
             $('#mdlCetakBarcode').modal('show');
             let barcode = $(this).data('barcode');
             let nama = $(this).data('nama');
+            let harga = $(this).data('harga');
             $('#nmBrg').val(nama);
             $('#barcode').val(barcode);
+            $('#harga').val(harga);
         });
 
         $(document).on('click', '#preview', function() {
             let barcode = $('#barcode').val();
             let jmlCetak = $('#jmlCetak').val();
-            if (jmlCetak > 0 && jmlCetak <= 10) {
-                window.open('../report/r-barcode.php?barcode=' + barcode + '&jmlCetak=' + jmlCetak, '_blank');
+            let nama = $('#nmBrg').val();
+            let harga = $('#harga').val();
+            if (jmlCetak > 0 && jmlCetak <= 40) {
+                window.open('../report/r-barcode.php?barcode=' + barcode + 
+                    '&jmlCetak=' + jmlCetak + 
+                    '&nama=' + encodeURIComponent(nama) + 
+                    '&harga=' + harga, '_blank');
             } else {
-                alert('Jumlah cetak maksimal 10 barcode');
+                alert('Jumlah cetak maksimal 40 barcode');
             }
         });
     });
