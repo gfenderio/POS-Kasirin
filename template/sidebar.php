@@ -44,7 +44,7 @@ ini_set('display_errors', 1);
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="<?= $main_url?>barang/form-barang.php" class="nav-link <?= menuBarang() ?>">
+                <a href="<?= $main_url?>barang/index.php" class="nav-link <?= menuBarang() ?>">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Barang</p>
                 </a>

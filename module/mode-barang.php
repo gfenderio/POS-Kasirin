@@ -14,9 +14,13 @@ function generateId() {
     $data       = mysqli_fetch_array($queryId);
     $maxid      = $data['maxid'];
 
-    $noUrut     = (int) substr($maxid, 4, 3);
-    $noUrut++;
-    $maxid      = "BRG-" . sprintf("%03s", $noUrut);
+    if ($maxid) {
+        $noUrut = (int) substr($maxid, 4, 3);
+        $noUrut++;
+        $maxid = "BRG-" . sprintf("%03s", $noUrut);
+    } else {
+        $maxid = "BRG-001";
+    }
 
     return $maxid;
 }
@@ -31,7 +35,7 @@ function insert($data){
     $harga_beli = mysqli_real_escape_string($koneksi, $data["harga_beli"]);
     $harga_jual = mysqli_real_escape_string($koneksi, $data["harga_jual"]);
     $stockmin   = mysqli_real_escape_string($koneksi, $data["stock_minimal"]);
-    $gambar     = mysqli_real_escape_string($koneksi, $_FILES["foto"]["name"]);
+    $foto       = mysqli_real_escape_string($koneksi, $_FILES["foto"]["name"]);
 
     $cekBarcode = mysqli_query($koneksi, "SELECT barcode FROM tbl_barang WHERE barcode = '$barcode'");
     if (mysqli_num_rows($cekBarcode)) {
@@ -42,20 +46,51 @@ function insert($data){
         return false;
     }
 
-    //upload gambar barang
-    if ($gambar != null) {
-        $gambar = uploadimg(null, $id);
+    //upload foto barang
+    if ($foto != null) {
+        $foto = uploadimg(null, $id);
     } else {
-        $gambar = 'no_product.png';
+        $foto = 'no_product.png';
     }
 
-    // gambar tidak sesuai validasi
-    if (!$gambar) {
+    // foto tidak sesuai validasi
+    if (!$foto) {
         return false;
     }
 
-    $sqlBarang = "INSERT INTO tbl_barang VALUES ('$id', '$barcode', '$name', '$harga_beli', '$harga_jual', 0, '$satuan', '$stockmin', '$gambar')";
+    $sqlBarang = "INSERT INTO tbl_barang VALUES ('$id', '$barcode', '$name', '$harga_beli', '$harga_jual', 0, '$satuan', '$stockmin', '$foto')";
     mysqli_query($koneksi, $sqlBarang);
+
+    return mysqli_affected_rows($koneksi);
+}
+
+function delete($id, $gbr) {
+    global $koneksi;
+
+    // Delete the item
+    $sqlDel = "DELETE FROM tbl_barang WHERE idbar = '$id'";
+    mysqli_query($koneksi, $sqlDel);
+    if ($gbr != 'no_product.png' && file_exists('../asset/image/' . $gbr)) {
+        unlink('../asset/image/' . $gbr);
+    }
+
+    // Update the remaining items
+    $barang = getData("SELECT * FROM tbl_barang ORDER BY idbar ASC");
+    $noUrut = 1;
+    foreach ($barang as $row) {
+        $newId = "BRG-" . sprintf("%03s", $noUrut);
+        if (isset($row['foto']) && $row['foto'] != 'no_product.png') {
+            $newfoto = str_replace($row['idbar'], $newId, $row['foto']);
+            if (file_exists('../asset/image/' . $row['foto'])) {
+                rename('../asset/image/' . $row['foto'], '../asset/image/' . $newfoto);
+            }
+        } else {
+            $newfoto = $row['foto'];
+        }
+        $sqlUpdate = "UPDATE tbl_barang SET idbar = '$newId', foto = '$newfoto' WHERE idbar = '{$row['idbar']}'";
+        mysqli_query($koneksi, $sqlUpdate);
+        $noUrut++;
+    }
 
     return mysqli_affected_rows($koneksi);
 }

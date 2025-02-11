@@ -42,7 +42,7 @@ if (isset($_POST["simpan"])) {
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="<?=$main_url?>dashboard.php">Halaman Utama</a></li>
-                        <li class="breadcrumb-item"><a href="<?=$main_url?>barang/form-barang.php">Barang</a></li>
+                        <li class="breadcrumb-item"><a href="<?=$main_url?>barang/index.php">Barang</a></li>
                         <li class="breadcrumb-item active">Tambah Barang</li>
                     </ol>
                 </div>
@@ -111,7 +111,6 @@ if (isset($_POST["simpan"])) {
             </div>
         </div>
     </section>
-</div>
 
 <?php
 require "../template/footer.php";

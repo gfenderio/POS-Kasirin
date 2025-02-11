@@ -120,8 +120,17 @@ function menuCustomer(){
     return $result;
 }
 
+function menuBarang(){
+    if (userMenu() == 'barang') {
+        $result = 'active';
+    } else {
+        $result = null;
+    }
+    return $result;
+}
+
 function menuMaster(){
-    if (userMenu() == 'supplier' || userMenu() == 'customer') {
+    if (userMenu() == 'supplier' || userMenu() == 'customer' or userMenu() == 'barang') {
         $result = 'menu-is-opening menu-open';
     } else {
         $result = null;
