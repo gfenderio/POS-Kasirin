@@ -10,7 +10,7 @@ if (userLogin()['level'] == 3) {
 function generateId() {
     global $koneksi;
 
-    $queryId    = mysqli_query($koneksi, "SELECT max(idbar) as maxid FROM tbl_barang");
+    $queryId    = mysqli_query($koneksi, "SELECT max(idbar) as maxid from tbl_barang");
     $data       = mysqli_fetch_array($queryId);
     $maxid      = $data['maxid'];
 
@@ -35,31 +35,37 @@ function insert($data){
     $harga_beli = mysqli_real_escape_string($koneksi, $data["harga_beli"]);
     $harga_jual = mysqli_real_escape_string($koneksi, $data["harga_jual"]);
     $stockmin   = mysqli_real_escape_string($koneksi, $data["stock_minimal"]);
-    $foto       = mysqli_real_escape_string($koneksi, $_FILES["foto"]["name"]);
+    $foto       = uploadimg(null, $id);
 
-    $cekBarcode = mysqli_query($koneksi, "SELECT barcode FROM tbl_barang WHERE barcode = '$barcode'");
-    if (mysqli_num_rows($cekBarcode)) {
-        echo "<script>
-                alert('Barcode sudah terdaftar');
-                document.location.href = '';
-              </script>";
-        return false;
-    }
-
-    //upload foto barang
-    if ($foto != null) {
-        $foto = uploadimg(null, $id);
-    } else {
-        $foto = 'no_product.png';
-    }
-
-    // foto tidak sesuai validasi
     if (!$foto) {
         return false;
     }
 
     $sqlBarang = "INSERT INTO tbl_barang VALUES ('$id', '$barcode', '$name', '$harga_beli', '$harga_jual', 0, '$satuan', '$stockmin', '$foto')";
     mysqli_query($koneksi, $sqlBarang);
+
+    return mysqli_affected_rows($koneksi);
+}
+
+function update($data) {
+    global $koneksi;
+    
+    $id         = mysqli_real_escape_string($koneksi, $data["kode"]);
+    $barcode    = mysqli_real_escape_string($koneksi, $data["barcode"]);
+    $name       = mysqli_real_escape_string($koneksi, $data["name"]);
+    $satuan     = mysqli_real_escape_string($koneksi, $data["satuan"]);
+    $harga_beli = mysqli_real_escape_string($koneksi, $data["harga_beli"]);
+    $harga_jual = mysqli_real_escape_string($koneksi, $data["harga_jual"]);
+    $stockmin   = mysqli_real_escape_string($koneksi, $data["stock_minimal"]);
+    $gbrLama    = mysqli_real_escape_string($koneksi, $data["oldImg"]);
+    $foto       = uploadimg($gbrLama, $id);
+
+    if (!$foto) {
+        return false;
+    }
+
+    $sqlUpdate = "UPDATE tbl_barang SET barcode = '$barcode', nama_barang = '$name', satuan = '$satuan', harga_beli = '$harga_beli', harga_jual = '$harga_jual', stock_minimal = '$stockmin', foto = '$foto' WHERE idbar = '$id'";
+    mysqli_query($koneksi, $sqlUpdate);
 
     return mysqli_affected_rows($koneksi);
 }
@@ -72,24 +78,6 @@ function delete($id, $gbr) {
     mysqli_query($koneksi, $sqlDel);
     if ($gbr != 'no_product.png' && file_exists('../asset/image/' . $gbr)) {
         unlink('../asset/image/' . $gbr);
-    }
-
-    // Update the remaining items
-    $barang = getData("SELECT * FROM tbl_barang ORDER BY idbar ASC");
-    $noUrut = 1;
-    foreach ($barang as $row) {
-        $newId = "BRG-" . sprintf("%03s", $noUrut);
-        if (isset($row['foto']) && $row['foto'] != 'no_product.png') {
-            $newfoto = str_replace($row['idbar'], $newId, $row['foto']);
-            if (file_exists('../asset/image/' . $row['foto'])) {
-                rename('../asset/image/' . $row['foto'], '../asset/image/' . $newfoto);
-            }
-        } else {
-            $newfoto = $row['foto'];
-        }
-        $sqlUpdate = "UPDATE tbl_barang SET idbar = '$newId', foto = '$newfoto' WHERE idbar = '{$row['idbar']}'";
-        mysqli_query($koneksi, $sqlUpdate);
-        $noUrut++;
     }
 
     return mysqli_affected_rows($koneksi);

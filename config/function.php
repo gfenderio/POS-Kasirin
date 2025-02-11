@@ -1,10 +1,16 @@
 <?php
 
 if (!function_exists('uploadimg')) {
-    function uploadimg($url = null, $name = null){
+    function uploadimg($oldImg, $id){
         $namafile = $_FILES['foto']['name'];
         $ukuran   = $_FILES['foto']['size'];
         $tmpfile  = $_FILES['foto']['tmp_name'];
+        $error    = $_FILES['foto']['error'];
+
+        // Check if no file is uploaded
+        if ($error === 4) {
+            return $oldImg ? $oldImg : 'no_product.png';
+        }
 
         // Validasi file gambar yang bisa diupload
         $ekstensivalid = ['jpg', 'jpeg', 'png', 'gif'];
@@ -12,37 +18,29 @@ if (!function_exists('uploadimg')) {
         $ekstensigambar = strtolower(end($ekstensigambar));
         
         if (!in_array($ekstensigambar, $ekstensivalid)) {
-            if ($url != null) {
-                echo "<script>
-                alert('Yang anda upload bukan file gambar'); document.location.href = '$url';
-                </script>";
-                die();
-            } else {
-                echo "<script>
-                alert('Yang anda upload bukan file gambar');
-                </script>";
-                return false;
-            }
+            echo "<script>
+            alert('Yang anda upload bukan file gambar');
+            </script>";
+            return false;
         }
 
         // Validasi ukuran gambar maksimal 1MB
         if ($ukuran > 1000000) {
-            if ($url != null) {
-                echo "<script>
-                alert('Ukuran gambar terlalu besar'); document.location.href = '$url';
-                </script>";
-                die();
-            } else {
-                echo "<script>
-                alert('Ukuran gambar terlalu besar');
-                </script>";
-                return false;
-            }
+            echo "<script>
+            alert('Ukuran gambar terlalu besar');
+            </script>";
+            return false;
         }
 
-        $namafileBaru = $name ? "{$name}.{$ekstensigambar}" : rand(10, 1000) . "-{$namafile}";
+        $namafileBaru = $id . '-' . uniqid() . '.' . $ekstensigambar;
 
         move_uploaded_file($tmpfile, '../asset/image/' . $namafileBaru);
+
+        // Delete old image if it exists and is not the default image
+        if ($oldImg && $oldImg !== 'no_product.png') {
+            unlink('../asset/image/' . $oldImg);
+        }
+
         return $namafileBaru;
     }
 }
