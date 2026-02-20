@@ -59,25 +59,25 @@ export default function SettingsPage() {
                                     <span className={`text-sm font-medium ${currentTheme === 'default' ? 'text-primary' : 'text-slate-500 dark:text-slate-400'}`}>Default (Hijau)</span>
                                 </button>
                                 <button
-                                    onClick={() => changeTheme('ocean')}
-                                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${currentTheme === 'ocean' ? 'border-blue-500 bg-blue-500/10' : 'border-slate-200 dark:border-slate-800 hover:border-primary/50'}`}
+                                    onClick={() => changeTheme('blue')}
+                                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${currentTheme === 'blue' ? 'border-blue-500 bg-blue-500/10' : 'border-slate-200 dark:border-slate-800 hover:border-primary/50'}`}
                                 >
                                     <div className="w-full h-12 bg-[#0ea5e9] rounded-md shadow-sm"></div>
-                                    <span className={`text-sm font-medium ${currentTheme === 'ocean' ? 'text-blue-500' : 'text-slate-500 dark:text-slate-400'}`}>Biru Laut</span>
+                                    <span className={`text-sm font-medium ${currentTheme === 'blue' ? 'text-blue-500' : 'text-slate-500 dark:text-slate-400'}`}>Biru Laut</span>
                                 </button>
                                 <button
-                                    onClick={() => changeTheme('royal')}
-                                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${currentTheme === 'royal' ? 'border-violet-500 bg-violet-500/10' : 'border-slate-200 dark:border-slate-800 hover:border-primary/50'}`}
+                                    onClick={() => changeTheme('purple')}
+                                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${currentTheme === 'purple' ? 'border-violet-500 bg-violet-500/10' : 'border-slate-200 dark:border-slate-800 hover:border-primary/50'}`}
                                 >
                                     <div className="w-full h-12 bg-[#8b5cf6] rounded-md shadow-sm"></div>
-                                    <span className={`text-sm font-medium ${currentTheme === 'royal' ? 'text-violet-500' : 'text-slate-500 dark:text-slate-400'}`}>Ungu Kerajaan</span>
+                                    <span className={`text-sm font-medium ${currentTheme === 'purple' ? 'text-violet-500' : 'text-slate-500 dark:text-slate-400'}`}>Ungu Kerajaan</span>
                                 </button>
                                 <button
-                                    onClick={() => changeTheme('sunset')}
-                                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${currentTheme === 'sunset' ? 'border-orange-500 bg-orange-500/10' : 'border-slate-200 dark:border-slate-800 hover:border-primary/50'}`}
+                                    onClick={() => changeTheme('orange')}
+                                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${currentTheme === 'orange' ? 'border-orange-500 bg-orange-500/10' : 'border-slate-200 dark:border-slate-800 hover:border-primary/50'}`}
                                 >
                                     <div className="w-full h-12 bg-[#f97316] rounded-md shadow-sm"></div>
-                                    <span className={`text-sm font-medium ${currentTheme === 'sunset' ? 'text-orange-500' : 'text-slate-500 dark:text-slate-400'}`}>Oranye Senja</span>
+                                    <span className={`text-sm font-medium ${currentTheme === 'orange' ? 'text-orange-500' : 'text-slate-500 dark:text-slate-400'}`}>Oranye Senja</span>
                                 </button>
                             </div>
                         </div>

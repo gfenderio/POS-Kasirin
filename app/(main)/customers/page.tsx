@@ -56,7 +56,7 @@ export default async function CustomersPage() {
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                                         <Phone className="h-3 w-3" />
-                                        {customer.telpon || '-'}
+                                        {customer.telpon?.toString() || '-'}
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">

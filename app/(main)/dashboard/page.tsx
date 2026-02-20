@@ -46,7 +46,7 @@ export default async function DashboardPage() {
             {/* KPI Cards */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {/* KPI 1: Total Products */}
-                <div className="rounded-xl bg-white dark:bg-[#16211C] p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/inventory" className="rounded-xl bg-white dark:bg-[#16211C] p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total Products</p>
@@ -56,10 +56,10 @@ export default async function DashboardPage() {
                             <span className="material-symbols-outlined text-[24px]">inventory_2</span>
                         </div>
                     </div>
-                </div>
+                </Link>
 
                 {/* KPI 2: Total Customers */}
-                <div className="rounded-xl bg-white dark:bg-[#16211C] p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/customers" className="rounded-xl bg-white dark:bg-[#16211C] p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total Customers</p>
@@ -69,10 +69,10 @@ export default async function DashboardPage() {
                             <span className="material-symbols-outlined text-[24px]">group</span>
                         </div>
                     </div>
-                </div>
+                </Link>
 
                 {/* KPI 3: Total Transactions */}
-                <div className="rounded-xl bg-white dark:bg-[#16211C] p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/transactions" className="rounded-xl bg-white dark:bg-[#16211C] p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Transactions</p>
@@ -82,10 +82,10 @@ export default async function DashboardPage() {
                             <span className="material-symbols-outlined text-[24px]">receipt_long</span>
                         </div>
                     </div>
-                </div>
+                </Link>
 
                 {/* KPI 4: Total Revenue */}
-                <div className="rounded-xl bg-white dark:bg-[#16211C] p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
+                <Link href="/reports" className="rounded-xl bg-white dark:bg-[#16211C] p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer block">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total Revenue</p>
@@ -97,7 +97,7 @@ export default async function DashboardPage() {
                             <span className="material-symbols-outlined text-[24px]">payments</span>
                         </div>
                     </div>
-                </div>
+                </Link>
             </div>
 
             {/* Additional Sections */}

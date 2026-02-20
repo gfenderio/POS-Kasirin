@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { posCache } from '@/lib/cache'
 
 export async function saveProduct(formData: FormData) {
     const rawId = formData.get('idbar') as string;
@@ -26,6 +27,9 @@ export async function saveProduct(formData: FormData) {
         }
     });
 
+    // Invalidate POS cache
+    posCache.delete('all_products');
+
     revalidatePath('/inventory');
     redirect('/inventory');
 }
@@ -34,6 +38,8 @@ export async function deleteProduct(formData: FormData) {
     const idbar = formData.get('idbar') as string;
     if (idbar) {
         await prisma.tbl_barang.delete({ where: { idbar } });
+        // Invalidate POS cache
+        posCache.delete('all_products');
         revalidatePath('/inventory');
     }
 }

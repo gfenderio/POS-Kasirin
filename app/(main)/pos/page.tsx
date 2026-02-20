@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
-import useSWR from 'swr'
+import useSWR, { useSWRConfig } from 'swr'
 import axios from 'axios'
 import dynamic from 'next/dynamic'
-import { offlineDB } from '@/lib/offlineDB'
+import { useCheckoutSync } from '@/hooks/useCheckoutSync'
+import { usePosShortcuts } from '@/hooks/usePosShortcuts'
+import PaymentModal from './PaymentModal'
 
 // Dynamic import with SSR disabled to reduce initial HTML payload and JS bundle for 50k items
 const ProductCard = dynamic(() => import('@/components/ProductCard'), {
@@ -31,67 +33,52 @@ interface CartItem extends Product {
 }
 
 export default function POSPage() {
+    const { mutate } = useSWRConfig()
     const { data: products, error: productsError } = useSWR<Product[]>('/api/products', fetcher)
-
-    // Customer data fetch removed as requested
+    const { processCheckout, performSync } = useCheckoutSync({
+        onSyncSuccess: () => mutate('/api/products')
+    })
 
     const [cart, setCart] = useState<CartItem[]>([])
     const [searchQuery, setSearchQuery] = useState('')
-    const [amountPaid, setAmountPaid] = useState<number>(0)
     const [isProcessing, setIsProcessing] = useState(false)
     const [isOnline, setIsOnline] = useState(true)
-    const [selectedIndex, setSelectedIndex] = useState(-1)
+    const [selectedIndex, setSelectedIndex] = useState(0)
+    const [isCartOpen, setIsCartOpen] = useState(false)
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
-    const searchInputRef = useRef<HTMLInputElement>(null)
-    const payInputRef = useRef<HTMLInputElement>(null)
-
-    // Sync Offline Transactions
-    const syncOfflineTransactions = useCallback(async () => {
-        const pending = await offlineDB.pendingTransactions.toArray()
-        if (pending.length === 0) return
-
-        let syncedCount = 0;
-        for (const tx of pending) {
-            try {
-                await axios.post('/api/transaction', {
-                    total: tx.totalAmount,
-                    jml_bayar: tx.amountPaid,
-                    kembalian: tx.change,
-                    id_user: 1,
-                    items: tx.items,
-                    offlineId: tx.offlineId
-                })
-                await offlineDB.pendingTransactions.delete(tx.id!)
-                syncedCount++;
-            } catch (err) {
-                console.error('Sync failed for offline tx', tx.offlineId)
-            }
-        }
-        if (syncedCount > 0) {
-            alert(`${syncedCount} transaksi offline berhasil disinkronkan otomatis!`)
-        }
-    }, [])
+    // Keyboard Shortcuts Integration
+    const { searchInputRef, payInputRef } = usePosShortcuts({
+        selectedIndex,
+        setSelectedIndex,
+        listLength: useMemo(() => {
+            if (!products) return 0;
+            return products.filter(p =>
+                p.nama_barang.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.barcode.includes(searchQuery)
+            ).length;
+        }, [products, searchQuery]),
+        onAddToCart: (idx) => {
+            const results = products?.filter(p =>
+                p.nama_barang.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                p.barcode.includes(searchQuery)
+            ) || [];
+            if (results[idx]) addToCart(results[idx]);
+        },
+        onCheckout: () => setIsPaymentModalOpen(true)
+    });
 
     useEffect(() => {
         setIsOnline(navigator.onLine)
-
-        const handleOnline = () => {
-            setIsOnline(true)
-            syncOfflineTransactions()
-        }
+        const handleOnline = () => { setIsOnline(true); performSync(); }
         const handleOffline = () => setIsOnline(false)
-
         window.addEventListener('online', handleOnline)
         window.addEventListener('offline', handleOffline)
-
-        // Initial sync
-        if (navigator.onLine) syncOfflineTransactions()
-
         return () => {
             window.removeEventListener('online', handleOnline)
             window.removeEventListener('offline', handleOffline)
         }
-    }, [syncOfflineTransactions])
+    }, [performSync])
 
     // Filter products based on search
     const filteredProducts = useMemo(() => {
@@ -109,8 +96,6 @@ export default function POSPage() {
     const totalAmount = useMemo(() => {
         return cart.reduce((acc, item) => acc + item.subtotal, 0)
     }, [cart])
-
-    const change = amountPaid - totalAmount
 
     // Helpers
     const addToCart = useCallback((product: Product) => {
@@ -143,82 +128,45 @@ export default function POSPage() {
         })
     }
 
-    const handleCheckout = useCallback(async () => {
-        if (cart.length === 0) return alert('Keranjang kosong')
-        if (amountPaid < totalAmount) return alert('Pembayaran kurang')
+    const handleFinalCheckout = async (paymentMethod: 'CASH' | 'QRIS', amountPaid: number) => {
+        if (cart.length === 0) return
 
         setIsProcessing(true)
         try {
-            const itemsPayload = cart.map(item => ({
-                barcode: item.barcode,
-                nama_barang: item.nama_barang,
-                harga_beli: item.harga_beli,
-                harga_jual: item.harga_jual,
-                qty: item.qty,
-                subtotal: item.subtotal
-            }))
+            const result = await processCheckout({
+                totalAmount,
+                discountTotal: 0,
+                finalAmount: totalAmount,
+                amountPaid: amountPaid,
+                paymentMethod: paymentMethod,
+                createdAt: new Date().toISOString(),
+                items: cart.map(item => ({
+                    productId: item.idbar,
+                    idbar: item.idbar,
+                    nama_barang: item.nama_barang,
+                    harga_beli: item.harga_beli,
+                    qty: item.qty,
+                    unitPrice: item.harga_jual,
+                    subtotal: item.subtotal
+                }))
+            })
 
-            if (!isOnline) {
-                // Save Offline to Dexie
-                await offlineDB.pendingTransactions.add({
-                    offlineId: `off-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-                    totalAmount: totalAmount,
-                    amountPaid: amountPaid,
-                    change: change,
-                    items: itemsPayload,
-                    timestamp: Date.now()
-                })
-                alert('Tersimpan offline! Akan disinkronkan saat koneksi pulih.')
+            if (result.success) {
+                alert(result.offline ? 'Tersimpan offline! Data akan disinkronkan saat online.' : 'Transaksi berhasil!')
                 setCart([])
-                setAmountPaid(0)
+                setIsPaymentModalOpen(false)
+                mutate('/api/products')
             } else {
-                const payload = {
-                    total: totalAmount,
-                    jml_bayar: amountPaid,
-                    kembalian: change,
-                    id_user: 1, // Hardcoded for now, default cashier
-                    items: itemsPayload
-                }
-
-                await axios.post('/api/transaction', payload)
-                alert('Transaksi berhasil!')
-                setCart([])
-                setAmountPaid(0)
+                alert(`Gagal memproses transaksi: ${result.error}`)
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
-            alert('Transaksi gagal')
+            alert('Gagal memproses transaksi')
         } finally {
             setIsProcessing(false)
         }
-    }, [cart, amountPaid, totalAmount, change, isOnline])
+    }
 
-    // Keyboard Shortcuts Listener
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'F1') {
-                e.preventDefault(); searchInputRef.current?.focus()
-            } else if (e.key === 'F2') {
-                e.preventDefault(); payInputRef.current?.focus()
-            } else if (e.key === 'F9') {
-                e.preventDefault(); handleCheckout()
-            } else if (e.key === 'ArrowDown') {
-                if (document.activeElement === searchInputRef.current && filteredProducts.length > 0) {
-                    e.preventDefault(); setSelectedIndex(prev => Math.min(prev + 1, filteredProducts.length - 1))
-                }
-            } else if (e.key === 'ArrowUp') {
-                if (document.activeElement === searchInputRef.current && filteredProducts.length > 0) {
-                    e.preventDefault(); setSelectedIndex(prev => Math.max(prev - 1, 0))
-                }
-            } else if (e.key === 'Enter') {
-                if (document.activeElement === searchInputRef.current && selectedIndex >= 0 && selectedIndex < filteredProducts.length) {
-                    e.preventDefault(); addToCart(filteredProducts[selectedIndex])
-                }
-            }
-        }
-        window.addEventListener('keydown', handleKeyDown)
-        return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [filteredProducts, selectedIndex, handleCheckout, addToCart])
 
     const formatRupiah = (val: number) =>
         new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val)
@@ -227,30 +175,42 @@ export default function POSPage() {
     if (!products) return <div className="flex h-screen items-center justify-center text-primary"><span className="material-symbols-outlined text-[32px] animate-spin">refresh</span></div>
 
     return (
-        <div className="flex h-[calc(100vh-2rem)] gap-6 p-6">
+        <div className="flex flex-col lg:flex-row h-screen lg:h-[calc(100vh-2rem)] gap-0 lg:gap-6 p-0 lg:p-6 overflow-hidden relative bg-slate-50 dark:bg-black/20">
             {/* Left: Product Selection */}
-            <div className="flex flex-1 flex-col">
-                <div className="mb-6 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50">Kasir (POS)</h2>
-                        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${isOnline ? 'bg-green-50 text-green-600 border-green-200' : 'bg-red-50 text-red-600 border-red-200'}`}>
-                            {isOnline ? <><span className="material-symbols-outlined text-[14px]">wifi</span> Online</> : <><span className="material-symbols-outlined text-[14px]">wifi_off</span> Offline Mode</>}
+            <div className="flex flex-1 flex-col overflow-hidden p-4 lg:p-0">
+                <div className="mb-4 sm:mb-8 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4 pl-12 lg:pl-0">
+                        <div className="bg-primary/10 p-2 rounded-xl">
+                            <span className="material-symbols-outlined text-primary text-3xl">point_of_sale</span>
+                        </div>
+                        <div>
+                            <h2 className="text-2xl xl:text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tight">Kasir</h2>
+                            <div className="flex items-center gap-2 mt-1">
+                                <div className={`h-2 w-2 rounded-full animate-pulse ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} />
+                                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-slate-400">
+                                    {isOnline ? 'System Online' : 'Offline Mode'}
+                                </span>
+                            </div>
                         </div>
                     </div>
-                    <div className="relative flex-1 max-w-md">
-                        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-gray-400">search</span>
+
+                    <div className="relative w-full xl:max-w-2xl group">
+                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[24px] text-slate-400 group-focus-within:text-primary transition-colors">search</span>
                         <input
                             ref={searchInputRef}
                             type="text"
-                            placeholder="Cari (F1)... [↑↓ Pilih, Enter Tambah]"
-                            className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#16211C] py-3 pl-10 pr-4 text-slate-900 dark:text-slate-50 placeholder-gray-400 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all shadow-sm"
+                            placeholder="Cari Nama Barang atau Barcode... (F1)"
+                            className="w-full rounded-2xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-[#16211C] py-3 sm:py-4 pl-14 pr-6 text-slate-900 dark:text-slate-50 placeholder-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none transition-all shadow-sm text-base sm:text-lg font-medium"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                            <kbd className="hidden sm:inline-flex h-6 items-center px-1.5 font-sans text-[10px] font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded transition-opacity">F1</kbd>
+                        </div>
                     </div>
                 </div>
 
-                <div className="grid flex-1 grid-cols-2 gap-4 overflow-y-auto pb-4 pr-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 content-start">
+                <div className="grid flex-1 grid-cols-2 gap-3 sm:gap-4 overflow-y-auto pb-4 pr-1 sm:pr-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 content-start">
                     {filteredProducts.map((product, idx) => (
                         <div key={product.barcode} className={`transition-all rounded-xl ${selectedIndex === idx && document.activeElement === searchInputRef.current ? 'ring-4 ring-primary ring-opacity-50 scale-[1.02]' : ''}`}>
                             <ProductCard product={product} onAddToCart={addToCart} />
@@ -259,13 +219,24 @@ export default function POSPage() {
                 </div>
             </div>
 
-            {/* Right: Cart */}
-            <div className="flex w-96 flex-col rounded-2xl bg-white dark:bg-[#16211C] border border-slate-200 dark:border-slate-800 shadow-xl">
-                <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-gray-50/50 dark:bg-white/5 rounded-t-2xl">
+            {/* Right: Cart Overlay/Sidebar */}
+            {/* Mobile Overlay */}
+            {isCartOpen && (
+                <div
+                    className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+                    onClick={() => setIsCartOpen(false)}
+                />
+            )}
+
+            <div className={`fixed inset-y-0 right-0 z-50 lg:relative lg:flex lg:translate-x-0 ${isCartOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out flex w-[90%] sm:w-96 flex-col bg-white dark:bg-[#16211C] border-l lg:border border-slate-200 dark:border-slate-800 shadow-2xl lg:shadow-xl lg:rounded-2xl overflow-hidden`}>
+                <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-gray-50/50 dark:bg-white/5 flex items-center justify-between">
                     <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-slate-50">
                         <span className="material-symbols-outlined text-[20px] text-primary">shopping_cart</span>
                         Keranjang
                     </h2>
+                    <button onClick={() => setIsCartOpen(false)} className="lg:hidden p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
                 </div>
 
                 <div className="p-4 space-y-4 flex-1 flex flex-col overflow-hidden">
@@ -312,48 +283,64 @@ export default function POSPage() {
                             <span>Subtotal</span>
                             <span className="font-semibold">{formatRupiah(totalAmount)}</span>
                         </div>
-                        <div className="flex justify-between items-center bg-slate-100 dark:bg-[#0B120F] p-4 rounded-xl border border-slate-200 dark:border-slate-800">
-                            <span className="text-lg font-bold text-slate-600 dark:text-slate-400">TOTAL</span>
-                            <span className="text-4xl font-extrabold text-primary tracking-tight">
+                        <div className="flex justify-between items-center bg-primary/10 dark:bg-primary/20 p-6 rounded-3xl border-2 border-primary/20">
+                            <span className="text-xs font-black text-primary uppercase tracking-[0.2em]">Total</span>
+                            <span className="text-4xl xl:text-5xl font-black text-primary tracking-tighter">
                                 {formatRupiah(totalAmount)}
                             </span>
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Bayar</label>
-                        <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">Rp</span>
-                            <input
-                                ref={payInputRef}
-                                type="number"
-                                className="block w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark py-2.5 pl-10 pr-3 text-slate-900 dark:text-slate-50 focus:border-primary focus:outline-none transition-colors font-mono font-medium"
-                                value={amountPaid || ''}
-                                onChange={(e) => setAmountPaid(Number(e.target.value))}
-                                placeholder="0 (F2)"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex justify-between text-sm items-center p-2 bg-white dark:bg-background-dark rounded-lg border border-slate-200 dark:border-slate-800">
-                        <span className="font-medium text-gray-500">Kembalian</span>
-                        <span className={`font-mono font-bold ${change < 0 ? 'text-red-500' : 'text-green-600'}`}>
-                            {formatRupiah(Math.max(0, change))}
-                        </span>
-                    </div>
 
                     <button
-                        onClick={handleCheckout}
+                        onClick={() => setIsPaymentModalOpen(true)}
                         disabled={isProcessing || cart.length === 0}
-                        className={`w-full rounded-xl py-3.5 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${isProcessing || cart.length === 0
-                            ? 'bg-gray-400 cursor-not-allowed shadow-none opacity-70'
-                            : 'bg-primary hover:bg-primary-hover'
+                        className={`w-full rounded-2xl py-5 font-black text-xl text-white shadow-2xl transition-all active:scale-[0.98] flex items-center justify-center gap-3 ${isProcessing || cart.length === 0
+                            ? 'bg-slate-300 cursor-not-allowed shadow-none'
+                            : 'bg-primary hover:bg-primary-hover shadow-primary/30'
                             }`}
                     >
-                        {isProcessing ? <span className="material-symbols-outlined animate-spin">refresh</span> : 'Selesaikan Transaksi (F9)'}
+                        {isProcessing ? <span className="material-symbols-outlined animate-spin">refresh</span> : (
+                            <>
+                                <span className="material-symbols-outlined">payment</span>
+                                BAYAR (F9)
+                            </>
+                        )}
                     </button>
                 </div>
             </div>
+
+            {/* Mobile Bottom Bar */}
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-[#16211C] border-t border-slate-200 dark:border-slate-800 p-4 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+                <button
+                    onClick={() => setIsCartOpen(true)}
+                    className="w-full bg-primary hover:bg-primary-hover text-white rounded-xl py-3.5 px-6 flex items-center justify-between shadow-lg shadow-primary/20 active:scale-[0.98] transition-all"
+                >
+                    <div className="flex items-center gap-2">
+                        <div className="relative">
+                            <span className="material-symbols-outlined">shopping_cart</span>
+                            {cart.length > 0 && (
+                                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white dark:ring-[#16211C]">
+                                    {cart.reduce((a, b) => a + b.qty, 0)}
+                                </span>
+                            )}
+                        </div>
+                        <span className="font-bold">Lihat Keranjang</span>
+                    </div>
+                    <span className="text-xl font-black">{formatRupiah(totalAmount)}</span>
+                </button>
+            </div>
+
+            {/* Safe area padding for mobile list */}
+            <div className="lg:hidden h-24 w-full flex-shrink-0" />
+
+            {/* Modals */}
+            <PaymentModal
+                isOpen={isPaymentModalOpen}
+                onClose={() => setIsPaymentModalOpen(false)}
+                totalAmount={totalAmount}
+                onConfirm={handleFinalCheckout}
+            />
         </div>
     )
 }

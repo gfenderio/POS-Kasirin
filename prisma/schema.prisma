@@ -7,8 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model tbl_barang {
-  idbar         String @id(length: 11) @db.VarChar(100)
+  idbar         String @id @db.VarChar(100)
   barcode       String @db.VarChar(100)
   nama_barang   String @db.VarChar(100)
   harga_beli    Int
@@ -58,8 +59,6 @@ model tbl_jual_head {
   jml_bayar Int
   kembalian Int
   id_user   Int
-
-  @@index([tgl_jual])
 }
 
 model tbl_supplier {
@@ -83,87 +82,8 @@ model tbl_user {
 
 model tbl_customer {
   id_customer Int    @id @default(autoincrement())
-  nama        String @db.VarChar(255)
-  telpon      String @db.VarChar(255)
-  deskripsi   String @db.Text
+  nama        String @db.VarChar(256)
+  telpon      Int
+  deskripsi   String @db.VarChar(256)
   alamat      String @db.Text
-}
-
-model Product {
-  id           String      @id @default(cuid())
-  sku          String      @unique
-  name         String
-  purchasePrice Int
-  sellingPrice  Int
-  categoryId   String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-
-  inventory    Inventory?
-  transactionItems TransactionItem[]
-}
-
-model Inventory {
-  id           String      @id @default(cuid())
-  productId    String      @unique
-  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
-  stock        Int         @default(0)
-  minStock     Int         @default(0)
-  lastUpdated  DateTime    @updatedAt
-}
-
-model Member {
-  id           String      @id @default(cuid())
-  memberCode   String      @unique
-  name         String
-  phone        String?
-  email        String?
-  createdAt    DateTime    @default(now())
-  transactions Transaction[]
-}
-
-model Promo {
-  id           String      @id @default(cuid())
-  name         String
-  type         String      // e.g., "DISCOUNT_PERCENT", "BUY_X_GET_Y", "DISCOUNT_AMOUNT"
-  value        Int         // e.g., 10 for 10% or 10000 for 10000 flat
-  minQty       Int         @default(0)       // e.g., 2 for buy 2
-  rewardQty    Int         @default(0)       // e.g., 1 for get 1
-  startDate    DateTime?
-  endDate      DateTime?
-  isActive     Boolean     @default(true)
-}
-
-model Transaction {
-  id           String      @id @default(cuid())
-  invoiceNo    String      @unique
-  memberId     String?
-  member       Member?     @relation(fields: [memberId], references: [id])
-  totalAmount  Int
-  discountTotal Int
-  finalAmount  Int
-  amountPaid   Int
-  paymentMethod String     // CASH, QRIS
-  status       String      // PENDING, PAID, FAILED, SYNCED
-  createdAt    DateTime    @default(now())
-  syncedAt     DateTime?   // For offline-first sync
-  offlineId    String?     // ID from IndexedDB mapping
-
-  items        TransactionItem[]
-
-  @@index([createdAt])
-  @@index([status])
-}
-
-model TransactionItem {
-  id           String      @id @default(cuid())
-  transactionId String
-  transaction  Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-  productId    String
-  product      Product     @relation(fields: [productId], references: [id])
-  qty          Int
-  unitPrice    Int
-  unitCogs     Int         @default(0) // Cost of Goods Sold tracking for PnL
-  discount     Int         @default(0) // Discount per item
-  subtotal     Int
 }
