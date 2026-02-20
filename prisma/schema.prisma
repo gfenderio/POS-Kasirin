@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model tbl_barang {
+  idbar         String @id(length: 11) @db.VarChar(100)
+  barcode       String @db.VarChar(100)
+  nama_barang   String @db.VarChar(100)
+  harga_beli    Int
+  harga_jual    Int
+  stock         Int
+  satuan        String @db.VarChar(20)
+  stock_minimal String @db.VarChar(100)
+  foto          String @db.VarChar(100)
+
+  @@index([barcode])
+  @@index([nama_barang])
+}
+
+model tbl_beli_detail {
+  id_beli_detail Int    @id @default(autoincrement())
+  no_beli        String @db.VarChar(20)
+  barcode        String @db.VarChar(100)
+  qty            Int
+  harga_beli     Int
+  subtotal       Int
+}
+
+model tbl_beli_head {
+  no_beli    String   @id @db.VarChar(20)
+  tgl_beli   DateTime @db.DateTime(0)
+  idsup      Int
+  total      Int
+  keterangan String?  @db.Text
+  id_user    Int
+}
+
+model tbl_jual_detail {
+  id_jual_detail Int    @id @default(autoincrement())
+  no_jual        String @db.VarChar(20)
+  barcode        String @db.VarChar(100)
+  nama_barang    String @db.VarChar(100)
+  harga_beli     Int
+  harga_jual     Int
+  qty            Int
+  subtotal       Int
+}
+
+model tbl_jual_head {
+  no_jual   String   @id @db.VarChar(20)
+  tgl_jual  DateTime @db.DateTime(0)
+  total     Int
+  jml_bayar Int
+  kembalian Int
+  id_user   Int
+
+  @@index([tgl_jual])
+}
+
+model tbl_supplier {
+  idsup     Int    @id @default(autoincrement())
+  nama      String @db.VarChar(255)
+  telp      String @db.VarChar(255)
+  deskripsi String @db.Text
+  alamat    String @db.Text
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tbl_user {
+  userid   Int    @id @default(autoincrement())
+  username String @db.VarChar(30)
+  fullname String @db.VarChar(100)
+  password String @db.VarChar(256)
+  address  String @db.VarChar(100)
+  level    Int
+  foto     String @db.VarChar(100)
+}
+
+model tbl_customer {
+  id_customer Int    @id @default(autoincrement())
+  nama        String @db.VarChar(255)
+  telpon      String @db.VarChar(255)
+  deskripsi   String @db.Text
+  alamat      String @db.Text
+}
+
+model Product {
+  id           String      @id @default(cuid())
+  sku          String      @unique
+  name         String
+  purchasePrice Int
+  sellingPrice  Int
+  categoryId   String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  inventory    Inventory?
+  transactionItems TransactionItem[]
+}
+
+model Inventory {
+  id           String      @id @default(cuid())
+  productId    String      @unique
+  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stock        Int         @default(0)
+  minStock     Int         @default(0)
+  lastUpdated  DateTime    @updatedAt
+}
+
+model Member {
+  id           String      @id @default(cuid())
+  memberCode   String      @unique
+  name         String
+  phone        String?
+  email        String?
+  createdAt    DateTime    @default(now())
+  transactions Transaction[]
+}
+
+model Promo {
+  id           String      @id @default(cuid())
+  name         String
+  type         String      // e.g., "DISCOUNT_PERCENT", "BUY_X_GET_Y", "DISCOUNT_AMOUNT"
+  value        Int         // e.g., 10 for 10% or 10000 for 10000 flat
+  minQty       Int         @default(0)       // e.g., 2 for buy 2
+  rewardQty    Int         @default(0)       // e.g., 1 for get 1
+  startDate    DateTime?
+  endDate      DateTime?
+  isActive     Boolean     @default(true)
+}
+
+model Transaction {
+  id           String      @id @default(cuid())
+  invoiceNo    String      @unique
+  memberId     String?
+  member       Member?     @relation(fields: [memberId], references: [id])
+  totalAmount  Int
+  discountTotal Int
+  finalAmount  Int
+  amountPaid   Int
+  paymentMethod String     // CASH, QRIS
+  status       String      // PENDING, PAID, FAILED, SYNCED
+  createdAt    DateTime    @default(now())
+  syncedAt     DateTime?   // For offline-first sync
+  offlineId    String?     // ID from IndexedDB mapping
+
+  items        TransactionItem[]
+
+  @@index([createdAt])
+  @@index([status])
+}
+
+model TransactionItem {
+  id           String      @id @default(cuid())
+  transactionId String
+  transaction  Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product     @relation(fields: [productId], references: [id])
+  qty          Int
+  unitPrice    Int
+  unitCogs     Int         @default(0) // Cost of Goods Sold tracking for PnL
+  discount     Int         @default(0) // Discount per item
+  subtotal     Int
+}

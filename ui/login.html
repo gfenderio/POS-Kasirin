@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>POS Login Screen</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "primary-hover": "#0fd673",
+                        "primary-content": "#064d2b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102219",
+                        "surface-dark": "#162e22",
+                        "surface-border": "#244a38",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display h-screen w-full overflow-hidden text-slate-900 dark:text-slate-100 antialiased selection:bg-primary selection:text-primary-content">
+<div class="flex h-full w-full flex-row">
+<!-- Left Panel: Visual Showcase -->
+<div class="hidden lg:flex lg:w-[60%] relative flex-col justify-end p-12 bg-cover bg-center" data-alt="Modern cafe interior with espresso machine and warm lighting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA4VWFXXhuR1xBVtgmF5_xZSVQjXefEvcnqS2Js1_X8nxXBGwiKGXXOMsmsi4MZvytRCGnv-tix0ABuQGqqBhykbgKTjQxPUZFSWN8gSHQ0mKfSP6wAr5imE8i24BdfNLrkxa3v5-tvi-eZd0Mh_FWP8CRN8Z_RSLk2NwN9nV-3mJrse6K8-oufe6Z5SluRjDXuocxiWCg1M38u9vqA7Mp5hwq9DEBeBRuDZHuOPSgzqh02z6lequP-cdUWRaHZq4VpNLS4Sw9ePthJ');">
+<!-- Dark Overlay Gradient -->
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-background-dark/40 to-transparent"></div>
+<!-- Content over image -->
+<div class="relative z-10 max-w-lg">
+<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">
+<span class="material-symbols-outlined text-primary text-[20px]">verified</span>
+<span class="text-sm font-medium text-white">System Operational</span>
+</div>
+<h1 class="text-5xl font-black leading-tight tracking-tight text-white drop-shadow-sm mb-4">
+                    Powering your business, <span class="text-primary">every day.</span>
+</h1>
+<p class="text-lg text-slate-200 font-medium">
+                    Streamlined operations for the modern retailer.
+                </p>
+</div>
+</div>
+<!-- Right Panel: Login Form -->
+<div class="flex w-full lg:w-[40%] flex-col items-center justify-center bg-background-light dark:bg-background-dark p-6 sm:p-12 relative">
+<!-- Mobile Background Image Overlay (Only visible on small screens) -->
+<div class="absolute inset-0 z-0 lg:hidden opacity-10 bg-cover bg-center" data-alt="Modern cafe interior pattern" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD2PoPERNqAB0XSosi9fsgpgqdHExXErDa-PfykEgkQuQLRvDitvz7UbxCwVKD5r1KGPEuBa0Ogb9AAuyC74rUIcGB-wlUIC-ycgHnoIpX8OCr39z7WG98x0MV5bDQaHTzTYSekKeMugUtyuGgp75cFrpKKerNmqejQpUGfWY_liEVoqfg771yg430iHUIl_EmLx0Hu2RGLtPj75UKUqdoad2UmfXFuLX4OshlwYgcktC_Q6O2ebu27CN1EeYt7kA32Ae16HZfmott-');">
+</div>
+<div class="w-full max-w-[420px] z-10 flex flex-col h-full justify-between py-4">
+<!-- Top Brand Area -->
+<div class="flex items-center gap-3 pt-4 lg:pt-0">
+<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-content">
+<span class="material-symbols-outlined">point_of_sale</span>
+</div>
+<span class="text-xl font-bold tracking-tight dark:text-white">NexusPOS</span>
+</div>
+<!-- Main Form Area -->
+<div class="flex flex-col gap-8 my-auto">
+<div class="flex flex-col gap-2">
+<h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Welcome back</h2>
+<p class="text-slate-500 dark:text-slate-400">Please enter your details to sign in.</p>
+</div>
+<form class="flex flex-col gap-5">
+<!-- Employee ID Input -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-200 ml-1" for="employee-id">
+                                Employee ID or Email
+                            </label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined">badge</span>
+</div>
+<input autofocus="" class="form-input block w-full rounded-xl border-0 bg-white dark:bg-surface-dark py-4 pl-12 pr-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-surface-border placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary text-lg sm:text-base leading-6 transition-all" id="employee-id" placeholder="Enter your ID" type="text"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-center ml-1">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-200" for="password">
+                                    Password
+                                </label>
+<a class="text-sm font-medium text-primary hover:text-primary-hover transition-colors" href="#">
+                                    Forgot password?
+                                </a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined">lock</span>
+</div>
+<input class="form-input block w-full rounded-xl border-0 bg-white dark:bg-surface-dark py-4 pl-12 pr-12 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-surface-border placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary text-lg sm:text-base leading-6 transition-all" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-200 transition-colors focus:outline-none" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-base font-bold text-primary-content shadow-lg shadow-primary/20 hover:bg-primary-hover hover:shadow-primary/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all active:scale-[0.98]" type="button">
+<span>Sign In to Dashboard</span>
+<span class="material-symbols-outlined text-[20px]">login</span>
+</button>
+</form>
+<!-- Quick Action / Alternative -->
+<div class="relative">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-slate-200 dark:border-surface-border"></div>
+</div>
+<div class="relative flex justify-center">
+<span class="bg-background-light dark:bg-background-dark px-2 text-sm text-slate-500">Or sign in with</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 rounded-xl bg-white dark:bg-surface-dark px-3 py-3 text-sm font-semibold text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-surface-border hover:bg-slate-50 dark:hover:bg-surface-border transition-colors" type="button">
+<span class="material-symbols-outlined text-primary">qr_code_scanner</span>
+                            Scan Badge
+                        </button>
+<button class="flex items-center justify-center gap-3 rounded-xl bg-white dark:bg-surface-dark px-3 py-3 text-sm font-semibold text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-200 dark:ring-surface-border hover:bg-slate-50 dark:hover:bg-surface-border transition-colors" type="button">
+<span class="material-symbols-outlined text-primary">fingerprint</span>
+                            Biometrics
+                        </button>
+</div>
+</div>
+<!-- Footer -->
+<div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-500 pt-6">
+<p>© 2024 NexusPOS Inc.</p>
+<div class="flex items-center gap-2">
+<span class="inline-block h-2 w-2 rounded-full bg-emerald-500"></span>
+<p>System v2.4.1</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

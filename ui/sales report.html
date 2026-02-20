@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nexus POS - Sales Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec80",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#111814",
+                        "surface-dark": "#1c2620",
+                        "border-dark": "#283930",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for table container */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1c2620;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #283930;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #3b5447;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between border-b border-solid border-border-dark px-6 py-3 bg-surface-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-8 text-primary">
+<span class="material-symbols-outlined text-3xl">point_of_sale</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Nexus POS</h2>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-[#9db9ab] hover:text-white text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-white text-sm font-medium border-b-2 border-primary pb-0.5" href="#">Reports</a>
+<a class="text-[#9db9ab] hover:text-white text-sm font-medium transition-colors" href="#">Inventory</a>
+<a class="text-[#9db9ab] hover:text-white text-sm font-medium transition-colors" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="hidden lg:flex flex-col min-w-40 h-9 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-background-dark border border-border-dark overflow-hidden focus-within:border-[#9db9ab] transition-colors">
+<div class="text-[#9db9ab] flex items-center justify-center pl-3">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full bg-transparent border-none text-white focus:ring-0 placeholder:text-[#5c6f64] px-3 text-sm" placeholder="Search transactions..."/>
+</div>
+</label>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg size-9 hover:bg-border-dark text-[#9db9ab] transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg size-9 hover:bg-border-dark text-[#9db9ab] transition-colors">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+<div class="h-9 w-9 rounded-full bg-cover bg-center border border-border-dark cursor-pointer" data-alt="User profile avatar showing a smiling man" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC5jVQF_M08o2YZy9b2wniXgB2VRUSaZMtOBDm5GxtoHjKWkM0qJuMTpp4QYuP9U7bGU2MW9ziogYexeb6liC3siOV-YlE9YwY7ukLXrw-CL7ITio_8O6wY2SsbUyghk35jaTF1jZcZCBhTMBluqJk1yN_RB_aQaT90UMPpRRPMmCyxHn4St4tv4dcU_r-CbFs5EN3gyYOLpjS00jfFW0pQVL3XOIFKp2PEMiedE1DTwiaw4LelbRcl5g5auyAHE3iJbgYOSf16Gi57');"></div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col p-6 gap-6 max-w-[1440px] mx-auto w-full">
+<!-- Page Header & Controls -->
+<div class="flex flex-col md:flex-row flex-wrap justify-between items-start md:items-center gap-4">
+<div>
+<h1 class="text-3xl font-bold tracking-tight text-white mb-1">Sales Reports &amp; Analytics</h1>
+<p class="text-[#9db9ab] text-sm">Overview of store performance for the selected period.</p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<!-- Date Range Picker Mockup -->
+<div class="flex items-center bg-surface-dark border border-border-dark rounded-lg p-1">
+<button class="px-3 py-1.5 text-sm text-[#9db9ab] hover:text-white font-medium">Daily</button>
+<button class="px-3 py-1.5 text-sm text-[#111814] bg-primary rounded font-bold shadow-sm">Weekly</button>
+<button class="px-3 py-1.5 text-sm text-[#9db9ab] hover:text-white font-medium">Monthly</button>
+</div>
+<div class="h-8 w-px bg-border-dark mx-1"></div>
+<div class="relative group">
+<button class="flex items-center gap-2 h-10 px-4 bg-surface-dark hover:bg-border-dark border border-border-dark text-white text-sm font-medium rounded-lg transition-all">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+<span>Oct 1 - Oct 7, 2023</span>
+<span class="material-symbols-outlined text-[18px]">arrow_drop_down</span>
+</button>
+</div>
+<button class="flex items-center gap-2 h-10 px-4 bg-primary hover:bg-[#0fd670] text-background-dark text-sm font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(19,236,128,0.15)]">
+<span class="material-symbols-outlined text-[20px]">download</span>
+<span>Export</span>
+</button>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="flex flex-col gap-3 rounded-xl p-5 bg-surface-dark border border-border-dark hover:border-[#3b5447] transition-all">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-lg bg-background-dark text-[#9db9ab]">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex items-center gap-1 text-primary bg-primary/10 px-2 py-0.5 rounded text-xs font-bold">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+<span>12.5%</span>
+</div>
+</div>
+<div>
+<p class="text-[#9db9ab] text-sm font-medium">Total Revenue</p>
+<p class="text-white text-2xl font-bold mt-1">$12,450.00</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-xl p-5 bg-surface-dark border border-border-dark hover:border-[#3b5447] transition-all">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-lg bg-background-dark text-[#9db9ab]">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div class="flex items-center gap-1 text-primary bg-primary/10 px-2 py-0.5 rounded text-xs font-bold">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+<span>5.2%</span>
+</div>
+</div>
+<div>
+<p class="text-[#9db9ab] text-sm font-medium">Total Transactions</p>
+<p class="text-white text-2xl font-bold mt-1">342</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-xl p-5 bg-surface-dark border border-border-dark hover:border-[#3b5447] transition-all">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-lg bg-background-dark text-[#9db9ab]">
+<span class="material-symbols-outlined">local_mall</span>
+</div>
+<div class="flex items-center gap-1 text-[#fa5538] bg-[#fa5538]/10 px-2 py-0.5 rounded text-xs font-bold">
+<span class="material-symbols-outlined text-xs">trending_down</span>
+<span>1.1%</span>
+</div>
+</div>
+<div>
+<p class="text-[#9db9ab] text-sm font-medium">Avg. Ticket Size</p>
+<p class="text-white text-2xl font-bold mt-1">$36.40</p>
+</div>
+</div>
+<div class="flex flex-col gap-3 rounded-xl p-5 bg-surface-dark border border-border-dark hover:border-[#3b5447] transition-all">
+<div class="flex justify-between items-start">
+<div class="p-2 rounded-lg bg-background-dark text-[#9db9ab]">
+<span class="material-symbols-outlined">restart_alt</span>
+</div>
+<div class="flex items-center gap-1 text-[#9db9ab] bg-[#9db9ab]/10 px-2 py-0.5 rounded text-xs font-bold">
+<span>0.0%</span>
+</div>
+</div>
+<div>
+<p class="text-[#9db9ab] text-sm font-medium">Refund Rate</p>
+<p class="text-white text-2xl font-bold mt-1">2.1%</p>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Revenue Chart -->
+<div class="lg:col-span-2 bg-surface-dark rounded-xl border border-border-dark p-6 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h3 class="text-white font-bold text-lg">Revenue Trends</h3>
+<p class="text-[#9db9ab] text-xs">Daily revenue comparison</p>
+</div>
+<button class="p-2 hover:bg-background-dark rounded text-[#9db9ab]">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<div class="flex-1 flex items-end gap-3 sm:gap-6 min-h-[240px] px-2 pb-2">
+<!-- Y-axis labels mockup (implicit) -->
+<!-- Chart Bars -->
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-[#283930] rounded-t-sm h-[40%] group-hover:bg-primary/40 transition-all relative">
+<div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-background-dark text-xs font-bold px-2 py-1 rounded whitespace-nowrap">$4.2k</div>
+</div>
+<span class="text-[#9db9ab] text-xs font-medium">Mon</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-[#283930] rounded-t-sm h-[65%] group-hover:bg-primary/40 transition-all relative">
+<div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-background-dark text-xs font-bold px-2 py-1 rounded whitespace-nowrap">$6.8k</div>
+</div>
+<span class="text-[#9db9ab] text-xs font-medium">Tue</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-primary rounded-t-sm h-[85%] relative shadow-[0_0_15px_rgba(19,236,128,0.2)]">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-background-dark text-xs font-bold px-2 py-1 rounded whitespace-nowrap">$8.9k</div>
+</div>
+<span class="text-white text-xs font-bold">Wed</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-[#283930] rounded-t-sm h-[55%] group-hover:bg-primary/40 transition-all relative">
+<div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-background-dark text-xs font-bold px-2 py-1 rounded whitespace-nowrap">$5.5k</div>
+</div>
+<span class="text-[#9db9ab] text-xs font-medium">Thu</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-[#283930] rounded-t-sm h-[75%] group-hover:bg-primary/40 transition-all relative">
+<div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-background-dark text-xs font-bold px-2 py-1 rounded whitespace-nowrap">$7.8k</div>
+</div>
+<span class="text-[#9db9ab] text-xs font-medium">Fri</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-[#283930] rounded-t-sm h-[90%] group-hover:bg-primary/40 transition-all relative">
+<div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-background-dark text-xs font-bold px-2 py-1 rounded whitespace-nowrap">$9.2k</div>
+</div>
+<span class="text-[#9db9ab] text-xs font-medium">Sat</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-full bg-[#283930] rounded-t-sm h-[60%] group-hover:bg-primary/40 transition-all relative">
+<div class="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-background-dark text-xs font-bold px-2 py-1 rounded whitespace-nowrap">$6.1k</div>
+</div>
+<span class="text-[#9db9ab] text-xs font-medium">Sun</span>
+</div>
+</div>
+</div>
+<!-- Category Breakdown -->
+<div class="bg-surface-dark rounded-xl border border-border-dark p-6 flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h3 class="text-white font-bold text-lg">Sales by Category</h3>
+<p class="text-[#9db9ab] text-xs">Distribution across items</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center gap-6">
+<!-- CSS Conic Gradient for Donut Chart -->
+<div class="relative size-48 rounded-full flex items-center justify-center" style="background: conic-gradient(#13ec80 0% 45%, #ffffff 45% 70%, #283930 70% 100%);">
+<div class="absolute inset-0 rounded-full opacity-20"></div>
+<!-- Inner circle for donut effect -->
+<div class="size-32 bg-surface-dark rounded-full flex flex-col items-center justify-center z-10">
+<span class="text-[#9db9ab] text-xs font-medium">Top Category</span>
+<span class="text-white text-2xl font-bold">Food</span>
+<span class="text-primary text-sm font-bold">45%</span>
+</div>
+</div>
+<div class="w-full flex flex-col gap-3 px-2">
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-primary"></div>
+<span class="text-white">Food</span>
+</div>
+<span class="text-[#9db9ab] font-mono">45%</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-white"></div>
+<span class="text-white">Beverages</span>
+</div>
+<span class="text-[#9db9ab] font-mono">25%</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-[#283930]"></div>
+<span class="text-white">Merchandise</span>
+</div>
+<span class="text-[#9db9ab] font-mono">30%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Transactions Table -->
+<div class="bg-surface-dark rounded-xl border border-border-dark flex flex-col overflow-hidden">
+<div class="p-6 border-b border-border-dark flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<h3 class="text-white font-bold text-lg">Recent Transactions</h3>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 bg-background-dark border border-border-dark rounded text-xs text-[#9db9ab] hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+                        Filter
+                    </button>
+<button class="flex items-center gap-2 px-3 py-1.5 bg-background-dark border border-border-dark rounded text-xs text-[#9db9ab] hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[16px]">sort</span>
+                        Sort
+                    </button>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-background-dark/50 border-b border-border-dark">
+<th class="py-3 px-6 text-xs font-semibold uppercase tracking-wider text-[#9db9ab]">Order ID</th>
+<th class="py-3 px-6 text-xs font-semibold uppercase tracking-wider text-[#9db9ab]">Date &amp; Time</th>
+<th class="py-3 px-6 text-xs font-semibold uppercase tracking-wider text-[#9db9ab]">Customer</th>
+<th class="py-3 px-6 text-xs font-semibold uppercase tracking-wider text-[#9db9ab]">Items</th>
+<th class="py-3 px-6 text-xs font-semibold uppercase tracking-wider text-[#9db9ab]">Status</th>
+<th class="py-3 px-6 text-xs font-semibold uppercase tracking-wider text-[#9db9ab] text-right">Amount</th>
+<th class="py-3 px-6 text-xs font-semibold uppercase tracking-wider text-[#9db9ab]"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark">
+<tr class="group hover:bg-background-dark/30 transition-colors">
+<td class="py-4 px-6 text-sm text-white font-mono">#ORD-0092</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Oct 24, 10:42 AM</td>
+<td class="py-4 px-6 text-sm text-white">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500"></div>
+                                    Michael S.
+                                </div>
+</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Latte, Croissant...</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                                    Completed
+                                </span>
+</td>
+<td class="py-4 px-6 text-sm text-white font-bold text-right font-mono">$14.50</td>
+<td class="py-4 px-6 text-right">
+<button class="text-[#9db9ab] hover:text-white"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+</td>
+</tr>
+<tr class="group hover:bg-background-dark/30 transition-colors">
+<td class="py-4 px-6 text-sm text-white font-mono">#ORD-0091</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Oct 24, 10:38 AM</td>
+<td class="py-4 px-6 text-sm text-white">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-gradient-to-tr from-yellow-500 to-orange-500"></div>
+                                    Sarah J.
+                                </div>
+</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Avocado Toast</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#fa5538]/10 text-[#fa5538] border border-[#fa5538]/20">
+<span class="size-1.5 rounded-full bg-[#fa5538]"></span>
+                                    Refunded
+                                </span>
+</td>
+<td class="py-4 px-6 text-sm text-white font-bold text-right font-mono">$12.00</td>
+<td class="py-4 px-6 text-right">
+<button class="text-[#9db9ab] hover:text-white"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+</td>
+</tr>
+<tr class="group hover:bg-background-dark/30 transition-colors">
+<td class="py-4 px-6 text-sm text-white font-mono">#ORD-0090</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Oct 24, 10:35 AM</td>
+<td class="py-4 px-6 text-sm text-white">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-gradient-to-tr from-green-500 to-teal-500"></div>
+                                    Guest User
+                                </div>
+</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Espresso x2</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                                    Completed
+                                </span>
+</td>
+<td class="py-4 px-6 text-sm text-white font-bold text-right font-mono">$6.00</td>
+<td class="py-4 px-6 text-right">
+<button class="text-[#9db9ab] hover:text-white"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+</td>
+</tr>
+<tr class="group hover:bg-background-dark/30 transition-colors">
+<td class="py-4 px-6 text-sm text-white font-mono">#ORD-0089</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Oct 24, 10:15 AM</td>
+<td class="py-4 px-6 text-sm text-white">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-gradient-to-tr from-pink-500 to-rose-500"></div>
+                                    Emily R.
+                                </div>
+</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Takeout Box (Large)</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+<span class="size-1.5 rounded-full bg-yellow-500"></span>
+                                    Pending
+                                </span>
+</td>
+<td class="py-4 px-6 text-sm text-white font-bold text-right font-mono">$24.50</td>
+<td class="py-4 px-6 text-right">
+<button class="text-[#9db9ab] hover:text-white"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+</td>
+</tr>
+<tr class="group hover:bg-background-dark/30 transition-colors">
+<td class="py-4 px-6 text-sm text-white font-mono">#ORD-0088</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Oct 24, 09:55 AM</td>
+<td class="py-4 px-6 text-sm text-white">
+<div class="flex items-center gap-2">
+<div class="size-6 rounded-full bg-gradient-to-tr from-gray-500 to-slate-500"></div>
+                                    David K.
+                                </div>
+</td>
+<td class="py-4 px-6 text-sm text-[#9db9ab]">Cappuccino, Muffin</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+<span class="size-1.5 rounded-full bg-primary"></span>
+                                    Completed
+                                </span>
+</td>
+<td class="py-4 px-6 text-sm text-white font-bold text-right font-mono">$9.25</td>
+<td class="py-4 px-6 text-right">
+<button class="text-[#9db9ab] hover:text-white"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-border-dark flex items-center justify-between text-sm text-[#9db9ab]">
+<span>Showing 1-5 of 342 transactions</span>
+<div class="flex gap-1">
+<button class="px-3 py-1 rounded hover:bg-background-dark hover:text-white transition-colors disabled:opacity-50" disabled="">Prev</button>
+<button class="px-3 py-1 rounded bg-background-dark text-white border border-border-dark">1</button>
+<button class="px-3 py-1 rounded hover:bg-background-dark hover:text-white transition-colors">2</button>
+<button class="px-3 py-1 rounded hover:bg-background-dark hover:text-white transition-colors">3</button>
+<button class="px-3 py-1 rounded hover:bg-background-dark hover:text-white transition-colors">Next</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>
